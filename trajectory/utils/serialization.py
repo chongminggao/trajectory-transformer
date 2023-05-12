@@ -62,7 +62,15 @@ def load_config(*loadpath):
 
 def load_from_config(*loadpath):
     config = load_config(*loadpath)
+    change(config)
     return config.make()
+
+
+def change(config):
+     # = "bullet-" + config.env
+    config.env = "bullet-" + config.env
+    config._dict['env'] = config.env
+
 
 def load_args(*loadpath):
     from .setup import Parser

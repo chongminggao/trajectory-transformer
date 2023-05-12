@@ -3,7 +3,7 @@ from trajectory.utils import watch
 #------------------------ base ------------------------#
 
 logbase = 'logs/'
-gpt_expname = 'gpt/azure'
+gpt_expname = 'gpt/pretrained'
 
 ## automatically make experiment names for planning
 ## by labelling folders with these args
