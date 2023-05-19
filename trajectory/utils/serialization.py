@@ -7,6 +7,7 @@ import json
 import torch
 import pdb
 
+
 def mkdir(savepath, prune_fname=False):
     """
         returns `True` iff `savepath` is created
@@ -23,6 +24,7 @@ def mkdir(savepath, prune_fname=False):
     else:
         return False
 
+
 def get_latest_epoch(loadpath):
     states = glob.glob1(loadpath, 'state_*')
     latest_epoch = -1
@@ -30,6 +32,7 @@ def get_latest_epoch(loadpath):
         epoch = int(state.replace('state_', '').replace('.pt', ''))
         latest_epoch = max(epoch, latest_epoch)
     return latest_epoch
+
 
 def load_model(*loadpath, epoch=None, device='cuda:0'):
     loadpath = os.path.join(*loadpath)
@@ -42,6 +45,8 @@ def load_model(*loadpath, epoch=None, device='cuda:0'):
     state_path = os.path.join(loadpath, f'state_{epoch}.pt')
 
     config = pickle.load(open(config_path, 'rb'))
+    change_model(config)
+
     state = torch.load(state_path)
 
     model = config()
@@ -53,12 +58,14 @@ def load_model(*loadpath, epoch=None, device='cuda:0'):
 
     return model, epoch
 
+
 def load_config(*loadpath):
     loadpath = os.path.join(*loadpath)
     config = pickle.load(open(loadpath, 'rb'))
     print(f'[ utils/serialization ] Loaded config from {loadpath}')
     print(config)
     return config
+
 
 def load_from_config(*loadpath):
     config = load_config(*loadpath)
@@ -67,9 +74,15 @@ def load_from_config(*loadpath):
 
 
 def change(config):
-     # = "bullet-" + config.env
-    config.env = "bullet-" + config.env
+    # = "bullet-" + config.env
+    config.env = "bullet-" + config.env[:-1] + "0"
     config._dict['env'] = config.env
+
+
+def change_model(config):
+    # config.transition_dim = 34 # Todo: new env
+    # config.observation_dim = 17
+    pass
 
 
 def load_args(*loadpath):

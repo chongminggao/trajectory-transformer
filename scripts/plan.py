@@ -11,9 +11,11 @@ from trajectory.search import (
     update_context,
 )
 
+
 class Parser(utils.Parser):
     dataset: str = 'halfcheetah-medium-expert-v2'
     config: str = 'config.offline'
+
 
 #######################
 ######## setup ########
@@ -26,17 +28,27 @@ args = Parser().parse_args('plan')
 #######################
 
 dataset = utils.load_from_config(args.logbase, args.dataset, args.gpt_loadpath,
-        'data_config.pkl')
+                                 'data_config.pkl')
+
+# args.device = "cuda:4"
+# args.device = "cuda:4"
 
 gpt, gpt_epoch = utils.load_model(args.logbase, args.dataset, args.gpt_loadpath,
-        epoch=args.gpt_epoch, device=args.device)
+                                  epoch=args.gpt_epoch, device=args.device)
 
 #######################
 ####### dataset #######
 #######################
 
+args.dataset = "bullet-" + args.dataset[:-1] + "0"
+# config._dict['env'] = config.env
+
+# gpt.observation_dim = 26 # Todo: new env
+# gpt.transition_dim = 34
+
+
 env = datasets.load_environment(args.dataset)
-renderer = utils.make_renderer(args)
+# renderer = utils.make_renderer(args)
 timer = utils.timer.Timer()
 
 discretizer = dataset.discretizer
@@ -102,14 +114,14 @@ for t in range(T):
         f'time: {timer():.2f} | {args.dataset} | {args.exp_name} | {args.suffix}\n'
     )
 
-    ## visualization
-    if t % args.vis_freq == 0 or terminal or t == T:
-
-        ## save current plan
-        renderer.render_plan(join(args.savepath, f'{t}_plan.mp4'), sequence_recon, env.state_vector())
-
-        ## save rollout thus far
-        renderer.render_rollout(join(args.savepath, f'rollout.mp4'), rollout, fps=80)
+    # ## visualization
+    # if t % args.vis_freq == 0 or terminal or t == T:
+    #
+    #     ## save current plan
+    #     renderer.render_plan(join(args.savepath, f'{t}_plan.mp4'), sequence_recon, env.state_vector())
+    #
+    #     ## save rollout thus far
+    #     renderer.render_rollout(join(args.savepath, f'rollout.mp4'), rollout, fps=80)
 
     if terminal: break
 
